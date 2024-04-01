@@ -5,8 +5,11 @@ import random
 
 #defining server ip and port
 SERVER_NANE=socket.gethostname()
-SERVER_IP = socket.gethostbyname(SERVER_NANE)
+SERVER_IP = socket.gethostbyname(SERVER_NANE) 
 SERVER_PORT = 12345
+
+#defining a thread lock object
+lock = threading.Lock()
 
 #dictionary to store clients
 clients = {}
@@ -77,7 +80,9 @@ def handle_client(client_socket,client_address):
                                 new_name = message.split(" ")[1]
                                 #checking if new username is not already taken or empty
                                 if new_name.isspace() == False and new_name != "" and new_name not in users_online:
+                                    lock.acquire()
                                     print("changed username to: ", new_name)
+                                    lock.release()
                                     users_online.remove(client_name)
                                     client_name = new_name 
                                     users_online.append(client_name)
@@ -93,7 +98,9 @@ def handle_client(client_socket,client_address):
                                 new_color = message.split(" ")[1]
                                 new_color = int(new_color)
                                 if new_color > 0 and new_color <= 255:
+                                    lock.acquire()
                                     print("changed color of user"+client_name+"to: ", new_color)
+                                    lock.release()
                                     client_color = "\033[38;5;" + str(new_color) + "m"
                                 else:
                                     msgcli = "invalid color number, please choose a color between 1 and 255"
@@ -115,8 +122,12 @@ def handle_client(client_socket,client_address):
                                 client_socket.send(msgcli.encode())
                         #case to exit the chatroom       
                         case "/exit":
-                            print("closing connection with", client_address , flush=True)
-                            print("Done", flush=True)
+                            lock.acquire()
+                            print("closing connection with", client_address)
+                            lock.release()
+                            lock.acquire()
+                            print("Done",  )
+                            lock.release()
                             client_socket.close()
                             break
                         #case default for invalid commands
@@ -137,10 +148,14 @@ def accept_connections():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((SERVER_IP, SERVER_PORT))
     server.listen()
-    print(f"Server listening on {SERVER_IP}:{SERVER_PORT}", flush=True)
+    lock.acquire()
+    print(f"Server listening on {SERVER_IP}:{SERVER_PORT}")
+    lock.release()
     while True:
         client_socket, client_address = server.accept()
-        print(f"Connection from {client_address} has been established.", flush=True)
+        lock.acquire()
+        print(f"Connection from {client_address} has been established.")
+        lock.release()
         #creating a thread for each client
         thread = threading.Thread(target=handle_client, args=(client_socket,client_address,))
         thread.start()

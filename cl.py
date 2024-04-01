@@ -2,16 +2,21 @@ import socket
 import threading
 import sys
 
-#defininf the server ip and port
-SERVER_IP = "localhost"
+#defining the server ip and port
+SERVER_IP = "ip-address-here"
 SERVER_PORT = 12345
+
+#defining a thread lock object
+lock = threading.Lock()
 
 #function to receive messages from server
 def receive_messages(client_socket):
     while True:
         try:
             message = client_socket.recv(16000).decode()
+            lock.acquire()
             print(message)
+            lock.release()
         except:
             client_socket.close()
             sys.exit()
