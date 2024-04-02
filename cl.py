@@ -3,7 +3,7 @@ import threading
 import sys
 
 #defining the server ip and port
-SERVER_IP = "ip-address-here"
+SERVER_IP = "192.168.178.42"
 SERVER_PORT = 12345
 
 #defining a thread lock object

@@ -8,7 +8,7 @@ SERVER_NANE=socket.gethostname()
 SERVER_IP = socket.gethostbyname(SERVER_NANE) 
 SERVER_PORT = 12345
 #defining max number of connections
-MAX_CONNECTIONS = 4
+MAX_CONNECTIONS = 6
 
 #defining a thread lock object
 lock = threading.Lock()
@@ -60,7 +60,8 @@ def broadcast(message, sender_socket):
 #function to handle clients
 def handle_client(client_socket,client_address):
     client_socket.send("Welcome to the Chatroom!".encode())
-    client_socket.send("From now you can chat with other people in the Chat".encode())
+    client_socket.send("From now you can chat with other people in the Chat\n".encode())
+    client_socket.send("Type /help to see all commands".encode())
     #defining variable to store messages
     msgcli = ""
     #assigning random username and color to client
@@ -69,6 +70,8 @@ def handle_client(client_socket,client_address):
     names.remove(client_name)
     client_color = random.choice(colors)
     colors.remove(client_color)
+    clients[client_socket] = (client_name, client_color)
+    broadcast("user has joined the chat",client_socket)
     while True:
         try:
             message = client_socket.recv(16000).decode()
