@@ -118,7 +118,7 @@ def handle_client(client_socket,client_address):
                         case "/users":
                             client_socket.send("Users online: ".encode())
                             for user in users_online:
-                               msgcli = user
+                               msgcli = user+"\n"
                                client_socket.send(msgcli.encode())
                         #case to display all commands
                         case "/help":
