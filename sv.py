@@ -7,10 +7,13 @@ import random
 SERVER_NANE=socket.gethostname()
 SERVER_IP = socket.gethostbyname(SERVER_NANE) 
 SERVER_PORT = 12345
+#defining max number of connections
+MAX_CONNECTIONS = 4
 
 #defining a thread lock object
 lock = threading.Lock()
-
+#defining a semaphore to limit the number of connections
+semaphore = threading.Semaphore(MAX_CONNECTIONS)
 #dictionary to store clients
 clients = {}
 
@@ -128,6 +131,7 @@ def handle_client(client_socket,client_address):
                             lock.acquire()
                             print("Done",  )
                             lock.release()
+                            semaphore.release()
                             client_socket.close()
                             break
                         #case default for invalid commands
@@ -140,6 +144,7 @@ def handle_client(client_socket,client_address):
                     broadcast(message, client_socket)                 
         except:
             del clients[client_socket]
+            semaphore.release()
             client_socket.close()
             break
 
@@ -156,6 +161,8 @@ def accept_connections():
         lock.acquire()
         print(f"Connection from {client_address} has been established.")
         lock.release()
+        #decreasing semaphore value when a new client connects
+        semaphore.acquire()
         #creating a thread for each client
         thread = threading.Thread(target=handle_client, args=(client_socket,client_address,))
         thread.start()
