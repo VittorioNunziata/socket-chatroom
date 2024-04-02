@@ -1,9 +1,10 @@
 import socket
 import threading
 import sys
+import ipaddress
 
 #defining the server ip and port
-SERVER_IP = "192.168.178.42"
+SERVER_IP = ""
 SERVER_PORT = 12345
 
 #defining a thread lock object
@@ -34,9 +35,22 @@ def send_message(client_socket):
         except:
             client_socket.close()
             sys.exit()
+    
+def check_ip(ip):
+    try:
+        ipaddress.IPv4Network(ip)
+        return True
+    except ValueError:
+        return False
 
 #main function
-if __name__ == "__main__":  
+if __name__ == "__main__":
+    print("Please enter ip address of the server:")
+    SERVER_IP = input()
+    while check_ip(SERVER_IP) == False:
+        print("Please enter a valid ip address:")
+        SERVER_IP = input()
+    #creating a socket object  
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((SERVER_IP, SERVER_PORT))
     #creating threads for sending and receiving messages
