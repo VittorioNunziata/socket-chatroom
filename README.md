@@ -21,8 +21,8 @@ Prerequisites:
 
 How to use:
 -
-- change with a text editor in the cl.py the server ip address
 - while another sv.py is running you can start the cl.py for connecting your host to the server
+- after starting cl.py you must insert the ip address of the server
 - type and enjoy
 <br/>
 
