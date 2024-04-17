@@ -41,7 +41,10 @@ Commands:
 - /exit : allow the user to exit from the program
 <br/>
 <br/>
-<br>
+<br/>
+
+Demostration images:
+-
   <img src="images/server.png">
   <img src="images/users.png">
   <img src="images/help.png">
